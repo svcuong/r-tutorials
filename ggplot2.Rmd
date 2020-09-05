@@ -19,7 +19,7 @@ output:
   word_document:
     toc: yes
     toc_depth: '3'
-subtitle: '[Khoa học dữ liệu với R](https://svcuonghvktqs.github.io/)'
+subtitle: '[Khoa học dữ liệu với R](https://svcuong.github.io/)'
 ---
 
 ```{r setup, include=FALSE}
