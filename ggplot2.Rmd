@@ -1,5 +1,5 @@
 ---
-title: "Trực quan hóa dữ liệu với R"
+title: "Trực quan hóa dữ liệu với ggplot2"
 author: "Cuong Sai"
 output:
   html_document:
@@ -24,14 +24,16 @@ knitr::opts_chunk$set(
 ```
 
 
-# Giới thiệu về data visualization và ggplot2
-
-Trực quan hóa dữ liệu (`data visualization`) đóng vai trò vô cùng quan trọng trong phân tích dữ liệu và là phương pháp tiếp cận mạnh nhất giúp diễn giải nhanh chóng và hiệu quả dữ liệu thô thành các thông tin có ích hỗ trợ cho quá trình đưa ra quyết định. 
-
-Trong `R` đã tích hợp rất nhiều các hàm `base` cho phép  thiết kế và vẽ một biểu đồ một cách nhanh chóng và đẹp mắt. Bên cạnh những hàm `base`, `R` cũng có những gói  được phát triển chuyên dụng cho data visualization, nổi bật hơn cả trong số đó phải kể đến gói  `ggplot2` trong hệ sinh thái `tidyverse`. 
+# Giới thiệu gói ggplot2
 
 
-**ggplot2** là một gói đồ hòa mạnh mẽ được viết bởi [Hadley Wickham]() với mục đích tạo ra các **elegant graphics**. Hai chữ cái đầu `gg` trong `ggplot2` có nghĩa là **Grammar of Graphics** - tức là ngữ pháp biểu đồ.  Nguyên lý ngữ pháp biểu đồ trong `ggplot2` được mô tả như sau:
+Trực quan hóa dữ liệu (`data visualization`) là một trong những bước quan trọng và không thể thiếu trong khoa học dữ liệu. Nó là công cụ hiệu quả nhất giúp nhanh chóng diễn giải dữ liệu thô thành các thông tin có ích dưới dạng các biểu đồ.
+
+
+Trong tutorial này, tôi xin giới thiệu với các bạn gói `ggplot2` trong `R` và ứng dụng nó để tạo các dạng biểu đồ thường gặp nhất trong khoa học dữ liệu.
+
+
+**ggplot2** là một gói đồ họa rất mạnh dựa trên nguyên lý ngữ pháp biểu đồ (grammar ò graphics) và được phát triển bởi [Hadley Wickham](). Nó tuân theo cách tiếp cận nhiều lớp để cung cấp cho các ô nhìn tốt hơn với chức năng mạnh mẽ.
 
 ```
 Plot = data + Aesthetics + Geometry
@@ -39,11 +41,11 @@ Plot = data + Aesthetics + Geometry
 
 **Trong đó:**
 
-- data: dữ liệu ở dạng data frame
+- Lớp dữ liệu (`data`): Tập dữ liệu ở dạng `dataframe`
 
-- Aesthetics: sử dụng để quy định các biến cho trục Ox và Oy. Ngoài ra có thể sử dụng để điều chỉnh màu, kích cỡ, hình dạng,... của biểu đồ.
+- Lớp thẩm mỹ (`Aesthetics`): sử dụng để quy định các biến cho trục Ox và Oy. Ngoài ra có thể sử dụng để điều chỉnh màu, kích cỡ, hình dạng,... của biểu đồ.
 
-- Geometry: Thiết lập kiểu biểu đồ mà cần thể hiện (như histogram, box plot, line plot, density plot, dot plot,..)
+- Lớp Geometry: Thiết lập kiểu biểu đồ mà cần thể hiện (như histogram, box plot, line plot, density plot, dot plot,..)
 
 
 **Ngoài ra có thể thêm các lớp không bắt buộc như:**
@@ -77,9 +79,14 @@ library(ggplot2)
 Nếu các bạn đã biết sử dụng các biểu đồ base trên R thì ở bài này sẽ từng bước so sánh giữa base graphics với ggplot2, từ đó giúp bạn chuyển dần sang sử dụng ggplot2 một cách hiệu quả nhất.
 
 
-# Line graph
 
-## Making a Basic Line Graph
+[ggplot cheatsheet](https://rstudio.com/wp-content/uploads/2016/03/ggplot2-cheatsheet-2.0-Vietnamese.pdf)
+
+# Biểu đồ đường (Line graph)
+
+`Line graph` là biểu đồ trong đó chứa một hoặc nhiều đường, một đường biểu diễn cho sự thay đổi của 1 yếu tố nào đó qua nhiều mốc thời gian (tuần, tháng, năm ...).
+
+## Tạo line graph cơ bản 
 
 ```{r}
 library(ggplot2)
@@ -404,6 +411,27 @@ ggplot(lynx, as.numeric = FALSE) + geom_line() +
                vjust = 1.5, hjust = 1,  x.label.fmt = "%Y")+
   ylim(-500, 7300)
 ```
+
+
+# Sử dụng ggplot2 không cần code
+
+Để sử dụng ggplot2 nhanh chóng mà không cần phải viết `code` trong R, các bạn cần tải gói `esquisse`:
+
+```{r, eval=FALSE}
+install.packages("esquisse")
+```
+
+Sau đó các bạn nạp gói `esquisse` và phiên làm việc của R và dùng hàm `esquisser()` để sử dụng ggplot2;
+
+```{r, eval=FALSE}
+library(esquisse)
+esquisser()
+```
+
+Trên máy tính lúc này sẽ mở ra 1 cửa sổ mới để chúng ta có thể thực hiện các thao tác kéo thả như: import dữ liệu, chọn biến, trực quan hóa dữ liệu…Và thậm chí chúng ta có thể export phần script từ việc chúng ta trực quan hóa dữ liệu bằng việc kéo thả.
+
+![](img/ggplot2.PNG)
+
 
 **Tài liệu tham khảo:**
 
