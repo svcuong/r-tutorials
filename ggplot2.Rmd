@@ -1,7 +1,7 @@
 ---
 title: "Trực quan hóa dữ liệu với R"
 author: "Cuong Sai"
-date: '2018-11-26'
+date: 
 output:
   html_document:
     code_folding: show
@@ -30,16 +30,16 @@ knitr::opts_chunk$set(
 ```
 
 
-# Giới thiệu về ggplot2
+# 1. Giới thiệu về data visualization và ggplot2
 
-Trực quan hóa dữ liệu lại đóng vai trò  rất quan trọng trong phân tích dữ lịu. Trực quan hóa dữ liệu thường là phương pháp tiếp cận mạnh nhất giúp diễn giải nhanh chóng và hiệu quả dữ liệu thô thành các thông tin có ích hỗ trợ cho quá trình đưa ra quyết định. Tức là để biến dữ liệu thô đó thành những quyết định thì dữ liệu cần phải được hiểu rõ nhờ vào các công cụ trực quan hóa dữ liệu.
+Trực quan hóa dữ liệu (`data visualization`) đóng vai trò vô cùng quan trọng trong phân tích dữ liệu và là phương pháp tiếp cận mạnh nhất giúp diễn giải nhanh chóng và hiệu quả dữ liệu thô thành các thông tin có ích hỗ trợ cho quá trình đưa ra quyết định. 
 
-Hiện nay trên R đã tích hợp rất nhiều hàm để thiết kế và vẽ một biểu đồ một cách nhanh chóng và đẹp mắt. Bên cạnh những hàm base, R cũng có những gói packages được phát triển để chuyên về biểu đồ và nổi bất trên cả là gói ggplot2. 
+Trong `R` đã tích hợp rất nhiều các hàm `base` cho phép  thiết kế và vẽ một biểu đồ một cách nhanh chóng và đẹp mắt. Bên cạnh những hàm `base`, `R` cũng có những gói  được phát triển chuyên dụng cho data visualization, nổi bật hơn cả trong số đó phải kể đến gói  `ggplot2` trong hệ sinh thái `tidyverse`. 
 
 
-**ggplot2** là một package đồ hòa mạnh mẽ được viết bởi [Hadley Wickham]() với mục đích tạo ra các **elegant graphics**. `gg` trong ggplot2 có nghĩa là **Grammar of Graphics** - tức là ngữ pháp biểu đồ.  Nguyên lý ngữ pháp biểu đồ trong ggplot2 được mô tả như sau:
+**ggplot2** là một gói đồ hòa mạnh mẽ được viết bởi [Hadley Wickham]() với mục đích tạo ra các **elegant graphics**. Hai chữ cái đầu `gg` trong `ggplot2` có nghĩa là **Grammar of Graphics** - tức là ngữ pháp biểu đồ.  Nguyên lý ngữ pháp biểu đồ trong `ggplot2` được mô tả như sau:
 
-```{r, eval=FALSE}
+```
 Plot = data + Aesthetics + Geometry
 ```
 
@@ -82,9 +82,9 @@ library(ggplot2)
 
 Nếu các bạn đã biết sử dụng các biểu đồ base trên R thì ở bài này sẽ từng bước so sánh giữa base graphics với ggplot2, từ đó giúp bạn chuyển dần sang sử dụng ggplot2 một cách hiệu quả nhất.
 
-Các dạng biểu đồ cơ bản với ggplot2:
+# 2. Các dạng biểu đồ cơ bản với ggplot2
 
-# 1 Line graph
+## 2.1 Line graph
 
 ```{r}
 # Sử dụng dataset pressure
@@ -105,7 +105,7 @@ ggplot(df, aes(x=temperature, y=pressure)) + geom_line() + ylim(200, max(pressur
 ggplot(df, aes(x=temperature, y=pressure)) + geom_line()  + xlim(100, 500)
 ```
 
-## Thêm ponts vào line graph
+ Thêm ponts vào line graph
 ```{r}
 # Thêm points
 ggplot(df, aes(x=temperature, y=pressure)) + geom_line() + geom_point()
@@ -117,7 +117,7 @@ ggplot(df, aes(x=temperature, y=pressure)) + geom_line() + geom_point()
 ggplot(df, aes(x=temperature, y=pressure)) + geom_line() + geom_point() + scale_y_log10()
 ```
 
-## Tạo line graph với multiple lines
+Tạo line graph với multiple lines
 
 ```{r}
 # Tạo data frames
@@ -153,14 +153,14 @@ head(df)
 ggplot(df, aes(x = dates, y = Variable, color = cat)) +  geom_line() 
 ```
 
-## Thay đổi hình dạng của lines
+Thay đổi hình dạng của lines
 
 ```{r}
 ggplot(df1, aes(x = dates, y = Variable)) +  geom_line(linetype="dashed", size=1, colour="blue")
 ```
 
 
-## Thay đổi hình dạng của points
+Thay đổi hình dạng của points
 
 ```{r}
 ggplot(df1, aes(x = dates, y = Variable)) +  
@@ -172,7 +172,7 @@ Dưới đây là một số ký hiệu quy định cho hình dạng củ
 
 
 
-## Tạo Graph with a Shaded Area
+Tạo Graph with a Shaded Area
 
 ```{r}
 ggplot(df1, aes(x = dates, y = Variable)) +  
@@ -195,7 +195,7 @@ ggplot(df1, aes(x = dates, y = Variable)) +
   geom_area(colour="black", fill="green", alpha=.8)
 ```
 
-## Tạo Stacked Area Graph
+Tạo Stacked Area Graph
 
 ```{r}
 ggplot(df, aes(x = dates, y = Variable, fill = cat)) +
@@ -208,7 +208,7 @@ ggplot(df, aes(x = dates, y = Variable, fill = cat)) +
   scale_fill_brewer(palette="Blues", breaks=rev(levels(cat)))
 ```
 
-## Thêm Confidence Region
+Thêm Confidence Region
 
 Use geom_ribbon() and map values to ymin and ymax.
 
@@ -257,11 +257,11 @@ ggplot(df1, aes(x=dates, y=Variable)) +
 ```
 
 
-# 2 Scatter plot
+## 2.2 Scatter plot
 
-# 3 Kết hợp ggplot2 với dpl
+## 2.3 Kết hợp ggplot2 với dpl
 
-# 4 Ggplot2 cho dữ liệu chuỗi thời gian
+## 2.4 Ggplot2 cho dữ liệu chuỗi thời gian
 
 ```{r}
 library(ggplot2)
@@ -413,7 +413,7 @@ ggplot(lynx, as.numeric = FALSE) + geom_line() +
   ylim(-500, 7300)
 ```
 
-** Tài liệu tham khảo:
+**Tài liệu tham khảo:**
 
 http://www.sthda.com/english/articles/32-r-graphics-essentials/128-plot-time-series-data-using-ggplot/
 
