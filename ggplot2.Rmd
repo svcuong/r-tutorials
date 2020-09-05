@@ -12,7 +12,7 @@ output:
     toc: yes
     toc_depth: 2
     toc_float:
-      collapsed: no
+      collapsed: true
 subtitle: '[Khoa học dữ liệu với R](https://svcuong.github.io/)'
 ---
 
@@ -76,68 +76,53 @@ library(ggplot2)
 
 Nếu các bạn đã biết sử dụng các biểu đồ base trên R thì ở bài này sẽ từng bước so sánh giữa base graphics với ggplot2, từ đó giúp bạn chuyển dần sang sử dụng ggplot2 một cách hiệu quả nhất.
 
-# Các dạng biểu đồ cơ bản với ggplot2
 
-## Line graph
+# Line graph
 
-```{r}
-# Sử dụng dataset pressure
-df <- pressure
-head(df)
-```
+## Making a Basic Line Graph
 
 ```{r}
-# Tạo line graph sử dụng hàm ggplot()
 library(ggplot2)
+df <- pressure
 ggplot(df, aes(x=temperature, y=pressure)) + geom_line()
 ```
 
- 
-```{r}
-# giới hạn vùng cho trục tọa độ sử sụng xlim và ylim
-ggplot(df, aes(x=temperature, y=pressure)) + geom_line() + ylim(200, max(pressure))
-ggplot(df, aes(x=temperature, y=pressure)) + geom_line()  + xlim(100, 500)
-```
+## Adding Points to a Line Graph
 
- Thêm ponts vào line graph
 ```{r}
-# Thêm points
 ggplot(df, aes(x=temperature, y=pressure)) + geom_line() + geom_point()
 ```
 
+## Log axis
 
 ```{r}
-# Với log y-axis
 ggplot(df, aes(x=temperature, y=pressure)) + geom_line() + geom_point() + scale_y_log10()
 ```
 
-Tạo line graph với multiple lines
+
+## Changing the Appearance of Lines
 
 ```{r}
-# Tạo data frames
+ggplot(df, aes(x=temperature, y=pressure)) + geom_line(linetype="dashed", size=1, colour="blue")
+```
+
+
+## Changing the Appearance of Points
+
+```{r}
+ggplot(df, aes(x=temperature, y=pressure)) + geom_line() + geom_point(size=4, shape=22, colour="darkred", fill="pink")
+```
+
+
+## Making a Line Graph with Multiple Lines
+
+```{r}
+library(dplyr)
 nmonths = 24
 x = seq(as.Date("2015/1/1"), by = "month", length.out = nmonths)
 df1 <- data.frame(dates = x,Variable = rnorm(mean = 0.75,nmonths))
 df2 <- data.frame(dates = x,Variable = rnorm(mean = -0.75,nmonths))
 df3 <- data.frame(dates = x,Variable = rnorm(mean = 0.3,nmonths))
-head(df1)
-head(df2)
-head(df3)
-```
-
-```{r}
-# Tạoi multiple lines
-library(ggplot2)
-p <- ggplot() +
-  geom_line(data = df1, aes(x = dates, y = Variable), color = "blue") + 
-  geom_line(data = df2, aes(x = dates, y = Variable), color = "red") +
-  geom_line(data = df3, aes(x = dates, y = Variable), color = "green") 
-print(p)
-```
-
-```{r}
-# Tạo category cho 3 data frames và gộp chúng lại sử dụng dplyr
-library(dplyr)
 df <- df1 %>%  mutate(cat = "A") %>%  bind_rows(df2 %>% mutate(cat = "B")) %>%  bind_rows(df3 %>% mutate(cat = "C"))
 head(df)
 ```
@@ -146,116 +131,129 @@ head(df)
 # Tạo multiple lines graphs
 ggplot(df, aes(x = dates, y = Variable, color = cat)) +  geom_line() 
 ```
-
-Thay đổi hình dạng của lines
-
 ```{r}
-ggplot(df1, aes(x = dates, y = Variable)) +  geom_line(linetype="dashed", size=1, colour="blue")
+ggplot(df, aes(x = dates, y = Variable, linetype = cat)) +  geom_line() 
 ```
 
 
-Thay đổi hình dạng của points
+## Making a Graph with a Shaded Area
 
 ```{r}
-ggplot(df1, aes(x = dates, y = Variable)) +  
-  geom_line() +
-  geom_point(size=4, shape=22, colour="darkred", fill="pink")
+# Convert the sunspot.year data set into a data frame for this example
+sunspotyear <- data.frame(
+Year = as.numeric(time(sunspot.year)),
+Sunspots = as.numeric(sunspot.year)
+)
+ggplot(sunspotyear, aes(x=Year, y=Sunspots)) + geom_area()
 ```
 
-Dưới đây là một số ký hiệu quy định cho hình dạng của points trong R:
-
-
-
-Tạo Graph with a Shaded Area
 
 ```{r}
-ggplot(df1, aes(x = dates, y = Variable)) +  
-  geom_line() +
-  geom_area()
+ggplot(sunspotyear, aes(x=Year, y=Sunspots)) +
+geom_area(colour="black", fill="blue", alpha=.2)
 ```
 
 ```{r}
-ggplot(df1, aes(x = dates, y = Variable)) +  
-  geom_line() + 
-# Tạo 80% transparent với thiết lập alpha bằng 0.2
-# Việc này giúp cho chúng ta vẫn thấy những đường lưới hiển thị mờ
-  geom_area(colour="black", fill="green", alpha=.2)
+ggplot(sunspotyear, aes(x=Year, y=Sunspots)) +
+geom_area(fill="blue", alpha=.2) +
+geom_line()
+```
+
+## Making a Stacked Area Graph
+
+```{r}
+library(gcookbook) # For the data set
+ggplot(uspopage, aes(x=Year, y=Thousands, fill=AgeGroup)) + geom_area()
+```
+
+
+```{r}
+ggplot(uspopage, aes(x=Year, y=Thousands, fill=AgeGroup)) +
+geom_area(colour="black", size=.2, alpha=.4) +
+scale_fill_brewer(palette="Blues", breaks=rev(levels(uspopage$AgeGroup)))
+```
+
+## Making a Proportional Stacked Area Graph
+
+```{r}
+library(gcookbook) # For the data set
+library(plyr) # For the ddply() function
+# Convert Thousands to Percent
+uspopage_prop <- ddply(uspopage, "Year", transform,
+Percent = Thousands / sum(Thousands) * 100)
+```
+
+
+```{r}
+ggplot(uspopage_prop, aes(x=Year, y=Percent, fill=AgeGroup)) +
+geom_area(colour="black", size=.2, alpha=.4) +
+scale_fill_brewer(palette="Blues", breaks=rev(levels(uspopage$AgeGroup)))
+```
+
+
+## Adding a Confidence Region
+
+```{r}
+library(gcookbook) # For the data set
+# Grab a subset of the climate data
+clim <- subset(climate, Source == "Berkeley", select=c("Year", "Anomaly10y", "Unc10y"))
 ```
 
 ```{r}
-# Thử với alpha = 0.8
-ggplot(df1, aes(x = dates, y = Variable)) +  
-  geom_line() + 
-  geom_area(colour="black", fill="green", alpha=.8)
+# Shaded region
+ggplot(clim, aes(x=Year, y=Anomaly10y)) +
+geom_ribbon(aes(ymin=Anomaly10y-Unc10y, ymax=Anomaly10y+Unc10y),
+alpha=0.2) +
+geom_line()
 ```
 
-Tạo Stacked Area Graph
-
-```{r}
-ggplot(df, aes(x = dates, y = Variable, fill = cat)) +
-  geom_area()
-```
-
-```{r}
-ggplot(df, aes(x = dates, y = Variable, fill = cat)) +
-  geom_area(colour="black", size=.2, alpha=.4) +
-  scale_fill_brewer(palette="Blues", breaks=rev(levels(cat)))
-```
-
-Thêm Confidence Region
-
-Use geom_ribbon() and map values to ymin and ymax.
-
-```{r}
-# Tính 95% confidence interval cho variable
-# Viết hàm tính CI
-confidence_interval <- function(vector, interval) {
-  # Standard deviation of sample
-  vec_sd <- sd(vector)
-  # Sample size
-  n <- length(vector)
-  # Mean of sample
-  vec_mean <- mean(vector)
-  # Error according to t distribution
-  error <- qt((interval + 1)/2, df = n - 1) * vec_sd / sqrt(n)
-  # Confidence interval as a vector
-  # result <- data.frame("lower" = vec_mean - error, "upper" = vec_mean + error)
-  # Tuy nhiên để tạo ra hai cột lower và upper cho vector variable tôi làm như sau:
-  result <- data.frame("lower" = vector - error, "upper" = vector + error)
-  return(result)
-}
-# Ví dụ
-vector <- c(12, 17, 24, 35, 23, 34, 56)
-confidence_interval(vector, 0.90)
-```
-
-```{r}
-library(magrittr)
-range <- confidence_interval(df1$Variable, 0.95)
-df1 <- cbind(df1, range)
-head(df1)
-```
-
-```{r}
-ggplot(df1, aes(x = dates, y= Variable)) + 
-  geom_ribbon(aes(ymin = lower, ymax = upper), alpha=0.2) +
-  geom_line()
-```
 
 ```{r}
 # With a dotted line for upper and lower bounds
-ggplot(df1, aes(x=dates, y=Variable)) +
-  geom_line(aes(y=lower), colour="grey50", linetype="dotted") +
-  geom_line(aes(y=upper), colour="grey50", linetype="dotted") +
-  geom_line()
+ggplot(clim, aes(x=Year, y=Anomaly10y)) +
+geom_line(aes(y=Anomaly10y-Unc10y), colour="grey50", linetype="dotted") +
+geom_line(aes(y=Anomaly10y+Unc10y), colour="grey50", linetype="dotted") +
+geom_line()
 ```
 
 
-## 2.2 Scatter plot
+# Bar Graphs
 
-## 2.3 Kết hợp ggplot2 với dpl
+## Making a Basic Bar Graph
 
-## 2.4 Ggplot2 cho dữ liệu chuỗi thời gian
+```{r}
+library(gcookbook) # For the data set
+ggplot(pg_mean, aes(x=group, y=weight)) + geom_bar(stat="identity")
+```
+
+```{r}
+ggplot(BOD, aes(x=Time, y=demand)) + geom_bar(stat="identity")
+```
+
+```{r}
+# Convert Time to a discrete (categorical) variable with factor()
+ggplot(BOD, aes(x=factor(Time), y=demand)) + geom_bar(stat="identity")
+```
+
+```{r}
+ggplot(pg_mean, aes(x=group, y=weight)) +
+geom_bar(stat="identity", fill="lightblue", colour="black")
+```
+```{r}
+pg_mean
+```
+
+
+## Grouping Bars Together
+
+```{r}
+library(gcookbook) # For the data set
+cabbage_exp
+```
+
+
+
+# Sử dụng ggplot2 cho dữ liệu chuỗi thời gian
 
 ```{r}
 library(ggplot2)
