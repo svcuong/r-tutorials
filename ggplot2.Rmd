@@ -1,0 +1,422 @@
+---
+title: "Trực quan hóa dữ liệu với R"
+author: "Cuong Sai"
+date: '2018-11-26'
+output:
+  html_document:
+    code_folding: show
+    fig_caption: yes
+    highlight: textmate
+    theme: spacelab
+    toc: yes
+    toc_depth: 3
+    toc_float:
+      collapsed: no
+      smooth_scroll: yes
+  pdf_document:
+    toc: yes
+    toc_depth: '3'
+  word_document:
+    toc: yes
+    toc_depth: '3'
+subtitle: '[Khoa học dữ liệu với R](https://svcuonghvktqs.github.io/)'
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+    echo = TRUE,      # Output code chunks
+    message = FALSE,  # Toggle off message output 
+    warning = FALSE)  # Toggle off warning output
+```
+
+
+# Giới thiệu về ggplot2
+
+Trực quan hóa dữ liệu lại đóng vai trò  rất quan trọng trong phân tích dữ lịu. Trực quan hóa dữ liệu thường là phương pháp tiếp cận mạnh nhất giúp diễn giải nhanh chóng và hiệu quả dữ liệu thô thành các thông tin có ích hỗ trợ cho quá trình đưa ra quyết định. Tức là để biến dữ liệu thô đó thành những quyết định thì dữ liệu cần phải được hiểu rõ nhờ vào các công cụ trực quan hóa dữ liệu.
+
+Hiện nay trên R đã tích hợp rất nhiều hàm để thiết kế và vẽ một biểu đồ một cách nhanh chóng và đẹp mắt. Bên cạnh những hàm base, R cũng có những gói packages được phát triển để chuyên về biểu đồ và nổi bất trên cả là gói ggplot2. 
+
+
+**ggplot2** là một package đồ hòa mạnh mẽ được viết bởi [Hadley Wickham]() với mục đích tạo ra các **elegant graphics**. `gg` trong ggplot2 có nghĩa là **Grammar of Graphics** - tức là ngữ pháp biểu đồ.  Nguyên lý ngữ pháp biểu đồ trong ggplot2 được mô tả như sau:
+
+```{r, eval=FALSE}
+Plot = data + Aesthetics + Geometry
+```
+
+**Trong đó:**
+
+- data: dữ liệu ở dạng data frame
+
+- Aesthetics: sử dụng để quy định các biến cho trục Ox và Oy. Ngoài ra có thể sử dụng để điều chỉnh màu, kích cỡ, hình dạng,... của biểu đồ.
+
+- Geometry: Thiết lập kiểu biểu đồ mà cần thể hiện (như histogram, box plot, line plot, density plot, dot plot,..)
+
+
+**Ngoài ra có thể thêm các lớp không bắt buộc như:**
+
+- Tính toán thống kê (statítical transformation): Sử dụng các tính toán trong biểu đồ. VD: Thêm các biểu đồ xu hướng dạng trơ (geom_smooth) , số lượng bin trong histogram… Lớp này có thể nằm lồng trong các lớp khác)
+
+- Tỷ lệ (scale): Xác định tỷ lệ trong biểu đồ
+
+- Trục tọa độ (Coordinate): Xác định hệ trục tọa độ vẽ biểu đồ. VD: Hệ tọa độ 3 trục trong không gian (hệ tọa đồ Descartes), hệ tọa độ cực
+
+- Hệ thống Facet (tạm dịch: cách thức sắp xếp số liệu trên cùng 1 biểu đồ): Xác định cách thức sắp xếp vị trí của nhiều biểu đồ trên cùng một màn hình.
+
+- Các yêu tố khác: Tên biểu đồ, tên trục, chú giải,
+
+
+**Hai hàm chính được sử dụng để tạo biểu đồ trong ggplot2 là:
+
+- `qplot()`: Hàm tạo biểu đồ nhanh, dễ sử dụng dành cho các biểu đồ đơn giản
+
+- `qqplot()`: Hàm linh hoạt và mạnh mẽ hơn `qplot()` để xây dựng biểu đồ bằng các lớp chồng lên nhau.
+
+**cài đặt và load ggplot2:**
+
+```{r, eval=FALSE}
+# Installation
+install.packages('ggplot2')
+# Loading
+library(ggplot2)
+```
+
+Nếu các bạn đã biết sử dụng các biểu đồ base trên R thì ở bài này sẽ từng bước so sánh giữa base graphics với ggplot2, từ đó giúp bạn chuyển dần sang sử dụng ggplot2 một cách hiệu quả nhất.
+
+Các dạng biểu đồ cơ bản với ggplot2:
+
+# 1 Line graph
+
+```{r}
+# Sử dụng dataset pressure
+df <- pressure
+head(df)
+```
+
+```{r}
+# Tạo line graph sử dụng hàm ggplot()
+library(ggplot2)
+ggplot(df, aes(x=temperature, y=pressure)) + geom_line()
+```
+
+ 
+```{r}
+# giới hạn vùng cho trục tọa độ sử sụng xlim và ylim
+ggplot(df, aes(x=temperature, y=pressure)) + geom_line() + ylim(200, max(pressure))
+ggplot(df, aes(x=temperature, y=pressure)) + geom_line()  + xlim(100, 500)
+```
+
+## Thêm ponts vào line graph
+```{r}
+# Thêm points
+ggplot(df, aes(x=temperature, y=pressure)) + geom_line() + geom_point()
+```
+
+
+```{r}
+# Với log y-axis
+ggplot(df, aes(x=temperature, y=pressure)) + geom_line() + geom_point() + scale_y_log10()
+```
+
+## Tạo line graph với multiple lines
+
+```{r}
+# Tạo data frames
+nmonths = 24
+x = seq(as.Date("2015/1/1"), by = "month", length.out = nmonths)
+df1 <- data.frame(dates = x,Variable = rnorm(mean = 0.75,nmonths))
+df2 <- data.frame(dates = x,Variable = rnorm(mean = -0.75,nmonths))
+df3 <- data.frame(dates = x,Variable = rnorm(mean = 0.3,nmonths))
+head(df1)
+head(df2)
+head(df3)
+```
+
+```{r}
+# Tạoi multiple lines
+library(ggplot2)
+p <- ggplot() +
+  geom_line(data = df1, aes(x = dates, y = Variable), color = "blue") + 
+  geom_line(data = df2, aes(x = dates, y = Variable), color = "red") +
+  geom_line(data = df3, aes(x = dates, y = Variable), color = "green") 
+print(p)
+```
+
+```{r}
+# Tạo category cho 3 data frames và gộp chúng lại sử dụng dplyr
+library(dplyr)
+df <- df1 %>%  mutate(cat = "A") %>%  bind_rows(df2 %>% mutate(cat = "B")) %>%  bind_rows(df3 %>% mutate(cat = "C"))
+head(df)
+```
+
+```{r}
+# Tạo multiple lines graphs
+ggplot(df, aes(x = dates, y = Variable, color = cat)) +  geom_line() 
+```
+
+## Thay đổi hình dạng của lines
+
+```{r}
+ggplot(df1, aes(x = dates, y = Variable)) +  geom_line(linetype="dashed", size=1, colour="blue")
+```
+
+
+## Thay đổi hình dạng của points
+
+```{r}
+ggplot(df1, aes(x = dates, y = Variable)) +  
+  geom_line() +
+  geom_point(size=4, shape=22, colour="darkred", fill="pink")
+```
+
+Dưới đây là một số ký hiệu quy định cho hình dạng của points trong R:
+
+
+
+## Tạo Graph with a Shaded Area
+
+```{r}
+ggplot(df1, aes(x = dates, y = Variable)) +  
+  geom_line() +
+  geom_area()
+```
+
+```{r}
+ggplot(df1, aes(x = dates, y = Variable)) +  
+  geom_line() + 
+# Tạo 80% transparent với thiết lập alpha bằng 0.2
+# Việc này giúp cho chúng ta vẫn thấy những đường lưới hiển thị mờ
+  geom_area(colour="black", fill="green", alpha=.2)
+```
+
+```{r}
+# Thử với alpha = 0.8
+ggplot(df1, aes(x = dates, y = Variable)) +  
+  geom_line() + 
+  geom_area(colour="black", fill="green", alpha=.8)
+```
+
+## Tạo Stacked Area Graph
+
+```{r}
+ggplot(df, aes(x = dates, y = Variable, fill = cat)) +
+  geom_area()
+```
+
+```{r}
+ggplot(df, aes(x = dates, y = Variable, fill = cat)) +
+  geom_area(colour="black", size=.2, alpha=.4) +
+  scale_fill_brewer(palette="Blues", breaks=rev(levels(cat)))
+```
+
+## Thêm Confidence Region
+
+Use geom_ribbon() and map values to ymin and ymax.
+
+```{r}
+# Tính 95% confidence interval cho variable
+# Viết hàm tính CI
+confidence_interval <- function(vector, interval) {
+  # Standard deviation of sample
+  vec_sd <- sd(vector)
+  # Sample size
+  n <- length(vector)
+  # Mean of sample
+  vec_mean <- mean(vector)
+  # Error according to t distribution
+  error <- qt((interval + 1)/2, df = n - 1) * vec_sd / sqrt(n)
+  # Confidence interval as a vector
+  # result <- data.frame("lower" = vec_mean - error, "upper" = vec_mean + error)
+  # Tuy nhiên để tạo ra hai cột lower và upper cho vector variable tôi làm như sau:
+  result <- data.frame("lower" = vector - error, "upper" = vector + error)
+  return(result)
+}
+# Ví dụ
+vector <- c(12, 17, 24, 35, 23, 34, 56)
+confidence_interval(vector, 0.90)
+```
+
+```{r}
+library(magrittr)
+range <- confidence_interval(df1$Variable, 0.95)
+df1 <- cbind(df1, range)
+head(df1)
+```
+
+```{r}
+ggplot(df1, aes(x = dates, y= Variable)) + 
+  geom_ribbon(aes(ymin = lower, ymax = upper), alpha=0.2) +
+  geom_line()
+```
+
+```{r}
+# With a dotted line for upper and lower bounds
+ggplot(df1, aes(x=dates, y=Variable)) +
+  geom_line(aes(y=lower), colour="grey50", linetype="dotted") +
+  geom_line(aes(y=upper), colour="grey50", linetype="dotted") +
+  geom_line()
+```
+
+
+# 2 Scatter plot
+
+# 3 Kết hợp ggplot2 với dpl
+
+# 4 Ggplot2 cho dữ liệu chuỗi thời gian
+
+```{r}
+library(ggplot2)
+# Dữ liệu demo: economics trong gói ggplot2
+head(economics)
+```
+
+## Tạo line plots  cơ bản:
+
+```{r}
+# Basic line plot
+ggplot(data = economics, aes(x = date, y = pop))+
+  geom_line(color = "#00AFBB", size = 2)
+# Plot a subset of the data
+ss <- subset(economics, date > as.Date("2006-1-1"))
+ggplot(data = ss, aes(x = date, y = pop)) + 
+  geom_line(color = "#FC4E07", size = 2)
+```
+
+## Điều chỉnh kích thước line
+
+```{r}
+ggplot(data = economics, aes(x = date, y = pop)) +
+  geom_line(aes(size = unemploy/pop), color = "#FC4E07")
+```
+
+## Tạo multiple time series plots
+
+```{r}
+# Để tạo multiple plot bởi 2 biến psavert và uempmed theo dates. Đầu tiên cần định hình lại data sửu dụng tidyr package
+library(tidyr)
+library(dplyr)
+df <- economics %>%
+  select(date, psavert, uempmed) %>%
+  gather(key = "variable", value = "value", -date)
+head(df, 3)
+```
+
+```{r}
+# Multiple line plot
+ggplot(df, aes(x = date, y = value)) + 
+  geom_line(aes(color = variable), size = 1) +
+  scale_color_manual(values = c("#00AFBB", "#E7B800")) +
+  theme_minimal()
+```
+
+```{r}
+# Area plot
+ggplot(df, aes(x = date, y = value)) + 
+  geom_area(aes(color = variable, fill = variable), 
+            alpha = 0.5, position = position_dodge(0.8)) +
+  scale_color_manual(values = c("#00AFBB", "#E7B800")) +
+  scale_fill_manual(values = c("#00AFBB", "#E7B800"))
+```
+
+## Set date axis limits
+
+Key R function: scale_x_date()
+```{r}
+# Base plot with date axis
+p <- ggplot(data = economics, aes(x = date, y = psavert)) + 
+     geom_line(color = "#00AFBB", size = 1)
+p
+# Set axis limits c(min, max)
+min <- as.Date("2002-1-1")
+max <- NA
+p + scale_x_date(limits = c(min, max))
+```
+
+## Định dạngt date axis labels
+
+Key function: scale_x_date().
+
+To format date axis labels, you can use different combinations of days, weeks, months and years:
+
+- Weekday name: use %a and %A for abbreviated and full weekday name, respectively
+- Month name: use %b and %B for abbreviated and full month name, respectively
+- %d: day of the month as decimal number
+- %Y: Year with century.
+- See more options in the documentation of the function ?strptime
+
+```{r}
+# Format : month/year
+p + scale_x_date(date_labels = "%b/%Y")
+```
+
+## Add trend smoothed line
+
+Key function: stat_smooth()
+
+```{r}
+p + stat_smooth(
+  color = "#FC4E07", fill = "#FC4E07",
+  method = "loess"
+  )
+```
+
+## ggplot2 mở rộng cho đối tượng ts
+
+The ggfortify package is an extension to ggplot2 that makes it easy to plot time series objects (Horikoshi and Tang 2017). It can handle the output of many time series packages, including: zoo::zooreg(), xts::xts(), timeSeries::timSeries(), tseries::irts(), forecast::forecast(), vars:vars().
+
+Another interesting package is the ggpmisc package (Aphalo 2017), which provides two useful methods for time series object:
+
+- stat_peaks() finds at which x positions local y maxima are located, and
+- stat_valleys() finds at which x positions local y minima are located.
+
+Here, we’ll show how to easily:
+
+- Visualize a time series object, using the data set AirPassengers (monthly airline passenger numbers 1949-1960).
+- Identify shifts in mean and/or variance in a time series using the changepoint package.
+- Detect jumps in a data using the strucchange package and the data set Nile (Measurements of the annual flow of the river Nile at Aswan).
+- Detect peaks and valleys using the ggpmisc package and the data set lynx (Annual Canadian Lynx trappings 1821–1934).
+
+First, install required R packages:
+```{r, eval=FALSE}
+install.packages(
+  c("ggfortify", "changepoint",
+    "strucchange", "ggpmisc")
+)
+```
+
+Then use the autoplot.ts() function to visualize time series objects, as follow:
+
+```{r}
+library(ggfortify)
+library(magrittr) # for piping %>%
+# Plot ts objects
+autoplot(AirPassengers)
+# Identify change points in mean and variance
+AirPassengers %>%
+  changepoint:: cpt.meanvar() %>%  # Identify change points
+  autoplot()
+# Detect jump in a data
+strucchange::breakpoints(Nile ~ 1) %>%
+  autoplot()
+```
+
+Detect peaks and valleys:
+
+```{r}
+library(ggpmisc)
+ggplot(lynx, as.numeric = FALSE) + geom_line() + 
+  stat_peaks(colour = "red") +
+  stat_peaks(geom = "text", colour = "red", 
+             vjust = -0.5, x.label.fmt = "%Y") +
+  stat_valleys(colour = "blue") +
+  stat_valleys(geom = "text", colour = "blue", angle = 45,
+               vjust = 1.5, hjust = 1,  x.label.fmt = "%Y")+
+  ylim(-500, 7300)
+```
+
+** Tài liệu tham khảo:
+
+http://www.sthda.com/english/articles/32-r-graphics-essentials/128-plot-time-series-data-using-ggplot/
+
+Aphalo, Pedro J. 2017. Ggpmisc: Miscellaneous Extensions to ’Ggplot2’. https://CRAN.R-project.org/package=ggpmisc.
+
+Horikoshi, Masaaki, and Yuan Tang. 2017. Ggfortify: Data Visualization Tools for Statistical Analysis Results. https://CRAN.R-project.org/package=ggfortify.
