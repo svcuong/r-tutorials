@@ -1,24 +1,18 @@
 ---
 title: "Trực quan hóa dữ liệu với R"
 author: "Cuong Sai"
-date: 
 output:
   html_document:
+    css: style.css
     code_folding: show
     fig_caption: yes
     highlight: textmate
     theme: spacelab
+    number_sections: yes
     toc: yes
-    toc_depth: 3
+    toc_depth: 2
     toc_float:
       collapsed: no
-      smooth_scroll: yes
-  pdf_document:
-    toc: yes
-    toc_depth: '3'
-  word_document:
-    toc: yes
-    toc_depth: '3'
 subtitle: '[Khoa học dữ liệu với R](https://svcuong.github.io/)'
 ---
 
@@ -30,7 +24,7 @@ knitr::opts_chunk$set(
 ```
 
 
-# 1. Giới thiệu về data visualization và ggplot2
+# Giới thiệu về data visualization và ggplot2
 
 Trực quan hóa dữ liệu (`data visualization`) đóng vai trò vô cùng quan trọng trong phân tích dữ liệu và là phương pháp tiếp cận mạnh nhất giúp diễn giải nhanh chóng và hiệu quả dữ liệu thô thành các thông tin có ích hỗ trợ cho quá trình đưa ra quyết định. 
 
@@ -82,9 +76,9 @@ library(ggplot2)
 
 Nếu các bạn đã biết sử dụng các biểu đồ base trên R thì ở bài này sẽ từng bước so sánh giữa base graphics với ggplot2, từ đó giúp bạn chuyển dần sang sử dụng ggplot2 một cách hiệu quả nhất.
 
-# 2. Các dạng biểu đồ cơ bản với ggplot2
+# Các dạng biểu đồ cơ bản với ggplot2
 
-## 2.1 Line graph
+## Line graph
 
 ```{r}
 # Sử dụng dataset pressure

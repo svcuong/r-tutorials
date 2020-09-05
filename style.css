@@ -1,0 +1,20 @@
+
+/* Whole document: */
+body{
+    font-family: "Times New Roman", Times, serif;
+    font-size: 14pt;
+    
+}
+/* Headers */
+h1,h2,h3,h4,h5,h6{
+    font-family: "Times New Roman", Times, serif;
+    font-size: 20pt;
+    color: DarkBlue;
+}
+
+code.r{ /* Code block */
+    font-size: 14px;
+}
+pre { /* Code block - determines code spacing between lines */
+    font-size: 14px;
+}
